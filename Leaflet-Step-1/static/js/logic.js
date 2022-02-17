@@ -1,10 +1,4 @@
-// Define earthquakes plates GeoJSON url variable
-
-  // Create the tile layer that will be the background of our map.
-  // var streetmap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  //     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  // });
-// Define earthquakes plates GeoJSON url variable
+// Get earthquake date via geojson url
 const earthquakesURL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
 	
 
@@ -23,7 +17,7 @@ var grayscaleMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/
 });
 
 
-// Create the map, giving it the grayscaleMap and earthquakes layers to display on load
+// load map with earthquake layers and grayscale map
 var myMap = L.map("mapid", {
   center: [
     37.09, -95.71
@@ -34,11 +28,11 @@ var myMap = L.map("mapid", {
 
 
 d3.json(earthquakesURL, function(earthquakeData) {
-  // Determine the marker size by magnitude
+  // marker size
   function markerSize(magnitude) {
     return magnitude * 4;
   };
-  // Determine the marker color by depth
+  // marker color 
   function chooseColor(depth) {
     switch(true) {
       case depth > 90:
@@ -57,12 +51,12 @@ d3.json(earthquakesURL, function(earthquakeData) {
   }
 
 
-  // Create a GeoJSON layer containing the features array
-  // Each feature a popup describing the place and time of the earthquake
+  // GeoJSON layer with features
+  // popup of the places and time of earthquakes
   L.geoJSON(earthquakeData, {
     pointToLayer: function (feature, latlng) {
       return L.circleMarker(latlng, 
-        // Set the style of the markers based on properties.mag
+        // style of the markers based on properties
         {
           radius: markerSize(feature.properties.mag),
           fillColor: chooseColor(feature.geometry.coordinates[2]),
@@ -78,11 +72,11 @@ d3.json(earthquakesURL, function(earthquakeData) {
       + new Date(feature.properties.time) + "</p><hr><p>Magnitude: " + feature.properties.mag + "</p>");
     }
   }).addTo(earthquakes);
-  // Sending our earthquakes layer to the createMap function
+  // createMap function
   earthquakes.addTo(myMap);
 
 
-    // Add legend
+    // Legend
   var legend = L.control({position: "bottomright"});
   legend.onAdd = function() {
     var div = L.DomUtil.create("div", "info legend"),
